@@ -1,0 +1,6 @@
+# NIF file example
+# Linear amplitudes relative to desired signal
+# -20, -26, and -30 dB
+0.1
+0.05
+0.0316

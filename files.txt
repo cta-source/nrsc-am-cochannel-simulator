@@ -1,0 +1,180 @@
+File name                          size    Description
+
+addsig.m                           1,769 - GNU Octave function used by graveyard.m
+graveyard.m                       14,467 - GNU Octave code to simulate co-channel interference
+makeparams.m                       1,047 - GNU Octave code to create random interferer parameters
+nif.txt                               50 - Example data file for NIF mode
+parameters.txt                    17,588 - Data file used by graveyard.m containing random interferer parameters
+
+cochannel03.flac               2,111,017 - stereo audio 3 interferers L=synchronous R=nonsynchronous
+cochannel03nonsync.flac        1,080,555 - mono audio 3 interferers nonsynchronous
+cochannel03nonsyncqrm.flac       931,530 - mono audio 3 interferers nonsynchronous interference only
+cochannel03qrm.flac            1,866,544 - stereo audio 3 interferers L=synchronous R=nonsynchronous interference only
+cochannel03sync.flac           1,120,556 - mono audio 3 interferers synchronous
+cochannel03syncqrm.flac          964,550 - mono audio 3 interferers synchronous interference only
+
+cochannel03agc.png                35,309 - Graphic, receiver AGC for 3 interferers
+cochannel03ampqrm.png             34,568 - Graphic, amplitude of 3 interferers
+cochannel03phaseqrmnonsync.png    25,245 - Graphic, unwrapped phase of 3 interferers nonsynchronous
+cochannel03phaseqrmsync.png       24,655 - Graphic, unwrapped phase of 3 interferers synchronous
+cochannel03specnonsync.png        24,840 - Graphic, close-in spectrum 3 interferers nonsynchronous
+cochannel03specsync.png           24,902 - Graphic, close-in spectrum 3 interferers synchronous
+
+cochannel64.flac               2,180,978 - stereo audio 64 interferers L=synchronous R=nonsynchronous
+cochannel64nonsync.flac        1,085,344 - mono audio 64 interferers nonsynchronous
+cochannel64nonsyncqrm.flac       970,990 - mono audio 64 interferers nonsynchronous interference only
+cochannel64qrm.flac            2,009,917 - stereo audio 64 interferers L=synchronous R=nonsynchronous interference only
+cochannel64sync.flac           1,144,985 - mono audio 64 interferers synchronous
+cochannel64syncqrm.flac        1,044,320 - mono audio 64 interferers synchronous interference only
+
+cochannel64agc.png                31,468 - Graphic, receiver AGC for 64 interferers
+cochannel64ampqrm.png            122,480 - Graphic, amplitude of 64 interferers
+cochannel64phaseqrmnonsync.png    43,391 - Graphic, unwrapped phase of 64 interferers nonsynchronous
+cochannel64phaseqrmsync.png       59,543 - Graphic, unwrapped phase of 64 interferers synchronous
+cochannel64specnonsync.png        25,537 - Graphic, close-in spectrum 64 interferers nonsynchronous
+cochannel64specsync.png           24,484 - Graphic, close-in spectrum 64 interferers synchronous
+
+audio01.flac                   2,780,969 - 1 minute audio file containing desired audio
+audio02.flac                   3,038,521 - 1 minute audio file for interferer
+audio03.flac                   3,020,559 - 1 minute audio file for interferer
+audio04.flac                   2,981,437 - 1 minute audio file for interferer
+audio05.flac                   2,959,518 - 1 minute audio file for interferer
+audio06.flac                   3,012,464 - 1 minute audio file for interferer
+audio07.flac                   3,083,318 - 1 minute audio file for interferer
+audio08.flac                   2,789,359 - 1 minute audio file for interferer
+audio09.flac                   3,011,640 - 1 minute audio file for interferer
+audio10.flac                   2,911,607 - 1 minute audio file for interferer
+audio11.flac                   2,995,184 - 1 minute audio file for interferer
+audio12.flac                   2,975,522 - 1 minute audio file for interferer
+audio13.flac                   2,911,845 - 1 minute audio file for interferer
+audio14.flac                   2,845,418 - 1 minute audio file for interferer
+audio15.flac                   2,944,708 - 1 minute audio file for interferer
+audio16.flac                   2,976,678 - 1 minute audio file for interferer
+audio17.flac                   2,907,362 - 1 minute audio file for interferer
+audio18.flac                   2,935,298 - 1 minute audio file for interferer
+audio19.flac                   3,072,851 - 1 minute audio file for interferer
+audio20.flac                   2,954,667 - 1 minute audio file for interferer
+audio21.flac                   2,716,094 - 1 minute audio file for interferer
+audio22.flac                   2,898,621 - 1 minute audio file for interferer
+audio23.flac                   2,893,616 - 1 minute audio file for interferer
+audio24.flac                   2,981,810 - 1 minute audio file for interferer
+audio25.flac                   2,939,821 - 1 minute audio file for interferer
+audio26.flac                   3,002,097 - 1 minute audio file for interferer
+audio27.flac                   3,009,885 - 1 minute audio file for interferer
+audio28.flac                   2,864,070 - 1 minute audio file for interferer
+audio29.flac                   2,790,022 - 1 minute audio file for interferer
+audio30.flac                   3,103,747 - 1 minute audio file for interferer
+audio31.flac                   2,902,486 - 1 minute audio file for interferer
+audio32.flac                   2,956,961 - 1 minute audio file for interferer
+audio33.flac                   3,025,685 - 1 minute audio file for interferer
+audio34.flac                   2,945,719 - 1 minute audio file for interferer
+audio35.flac                   2,947,016 - 1 minute audio file for interferer
+audio36.flac                   2,917,476 - 1 minute audio file for interferer
+audio37.flac                   2,963,667 - 1 minute audio file for interferer
+audio38.flac                   3,055,479 - 1 minute audio file for interferer
+audio39.flac                   3,043,780 - 1 minute audio file for interferer
+audio40.flac                   3,130,703 - 1 minute audio file for interferer
+audio41.flac                   3,031,547 - 1 minute audio file for interferer
+audio42.flac                   3,069,890 - 1 minute audio file for interferer
+audio43.flac                   3,008,210 - 1 minute audio file for interferer
+audio44.flac                   3,044,820 - 1 minute audio file for interferer
+audio45.flac                   3,038,486 - 1 minute audio file for interferer
+audio46.flac                   2,929,419 - 1 minute audio file for interferer
+audio47.flac                   2,961,972 - 1 minute audio file for interferer
+audio48.flac                   2,632,057 - 1 minute audio file for interferer
+audio49.flac                   2,785,097 - 1 minute audio file for interferer
+audio50.flac                   2,882,333 - 1 minute audio file for interferer
+audio51.flac                   3,070,096 - 1 minute audio file for interferer
+audio52.flac                   2,933,611 - 1 minute audio file for interferer
+audio53.flac                   2,989,770 - 1 minute audio file for interferer
+audio54.flac                   3,025,737 - 1 minute audio file for interferer
+audio55.flac                   3,046,963 - 1 minute audio file for interferer
+audio56.flac                   2,485,348 - 1 minute audio file for interferer
+audio57.flac                   3,060,786 - 1 minute audio file for interferer
+audio58.flac                   2,914,486 - 1 minute audio file for interferer
+audio59.flac                   3,029,916 - 1 minute audio file for interferer
+audio60.flac                   2,987,722 - 1 minute audio file for interferer
+audio61.flac                   2,526,894 - 1 minute audio file for interferer
+audio62.flac                   3,124,670 - 1 minute audio file for interferer
+audio63.flac                   2,928,691 - 1 minute audio file for interferer
+audio64.flac                   2,960,422 - 1 minute audio file for interferer
+audio65.flac                   2,842,153 - 1 minute audio file for interferer
+audio66.flac                   2,883,019 - 1 minute audio file for interferer
+audio67.flac                   3,067,838 - 1 minute audio file for interferer
+audio68.flac                   3,166,770 - 1 minute audio file for interferer
+audio69.flac                   2,945,879 - 1 minute audio file for interferer
+audio70.flac                   2,994,101 - 1 minute audio file for interferer
+audio71.flac                   2,982,899 - 1 minute audio file for interferer
+audio72.flac                   2,915,716 - 1 minute audio file for interferer
+
+fade02.flac                      693,663 - complex fading function for interferer
+fade03.flac                      708,259 - complex fading function for interferer
+fade04.flac                      703,691 - complex fading function for interferer
+fade05.flac                      687,375 - complex fading function for interferer
+fade06.flac                      710,578 - complex fading function for interferer
+fade07.flac                      714,707 - complex fading function for interferer
+fade08.flac                      692,726 - complex fading function for interferer
+fade09.flac                      695,333 - complex fading function for interferer
+fade10.flac                      709,242 - complex fading function for interferer
+fade11.flac                      706,255 - complex fading function for interferer
+fade12.flac                      697,288 - complex fading function for interferer
+fade13.flac                      724,666 - complex fading function for interferer
+fade14.flac                      699,060 - complex fading function for interferer
+fade15.flac                      689,487 - complex fading function for interferer
+fade16.flac                      710,705 - complex fading function for interferer
+fade17.flac                      690,785 - complex fading function for interferer
+fade18.flac                      695,296 - complex fading function for interferer
+fade19.flac                      700,450 - complex fading function for interferer
+fade20.flac                      709,285 - complex fading function for interferer
+fade21.flac                      695,963 - complex fading function for interferer
+fade22.flac                      707,054 - complex fading function for interferer
+fade23.flac                      699,187 - complex fading function for interferer
+fade24.flac                      701,194 - complex fading function for interferer
+fade25.flac                      716,409 - complex fading function for interferer
+fade26.flac                      697,525 - complex fading function for interferer
+fade27.flac                      710,567 - complex fading function for interferer
+fade28.flac                      708,014 - complex fading function for interferer
+fade29.flac                      692,096 - complex fading function for interferer
+fade30.flac                      712,356 - complex fading function for interferer
+fade31.flac                      718,369 - complex fading function for interferer
+fade32.flac                      691,277 - complex fading function for interferer
+fade33.flac                      701,696 - complex fading function for interferer
+fade34.flac                      696,709 - complex fading function for interferer
+fade35.flac                      691,353 - complex fading function for interferer
+fade36.flac                      714,859 - complex fading function for interferer
+fade37.flac                      706,802 - complex fading function for interferer
+fade38.flac                      711,542 - complex fading function for interferer
+fade39.flac                      703,848 - complex fading function for interferer
+fade40.flac                      701,424 - complex fading function for interferer
+fade41.flac                      703,871 - complex fading function for interferer
+fade42.flac                      685,314 - complex fading function for interferer
+fade43.flac                      691,058 - complex fading function for interferer
+fade44.flac                      693,309 - complex fading function for interferer
+fade45.flac                      692,270 - complex fading function for interferer
+fade46.flac                      695,562 - complex fading function for interferer
+fade47.flac                      706,220 - complex fading function for interferer
+fade48.flac                      703,095 - complex fading function for interferer
+fade49.flac                      684,027 - complex fading function for interferer
+fade50.flac                      695,385 - complex fading function for interferer
+fade51.flac                      703,171 - complex fading function for interferer
+fade52.flac                      700,138 - complex fading function for interferer
+fade53.flac                      705,265 - complex fading function for interferer
+fade54.flac                      702,447 - complex fading function for interferer
+fade55.flac                      695,318 - complex fading function for interferer
+fade56.flac                      708,243 - complex fading function for interferer
+fade57.flac                      690,575 - complex fading function for interferer
+fade58.flac                      698,487 - complex fading function for interferer
+fade59.flac                      707,264 - complex fading function for interferer
+fade60.flac                      697,242 - complex fading function for interferer
+fade61.flac                      696,187 - complex fading function for interferer
+fade62.flac                      696,054 - complex fading function for interferer
+fade63.flac                      713,593 - complex fading function for interferer
+fade64.flac                      713,605 - complex fading function for interferer
+fade65.flac                      686,534 - complex fading function for interferer
+fade66.flac                      691,470 - complex fading function for interferer
+fade67.flac                      702,768 - complex fading function for interferer
+fade68.flac                      707,176 - complex fading function for interferer
+fade69.flac                      696,765 - complex fading function for interferer
+fade70.flac                      700,231 - complex fading function for interferer
+fade71.flac                      707,863 - complex fading function for interferer
+fade72.flac                      714,386 - complex fading function for interferer
