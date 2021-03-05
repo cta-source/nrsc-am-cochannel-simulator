@@ -1,4 +1,6 @@
 # nrsc-am-cochannel-simulator
+Author: David L. Hershberger (on Github: w9gr)
+
 GNU Octave code to simulate AM cochannel reception, with and without carrier synchronization.  Produces audio and graphics files.
 
 This software is used to subjectively evaluate the effects of carrier synchronization on cochannel interference. It runs under GNU Octave, which is a free open source matrix math tool. Versions are available for Linux, macOS, BSD, and Microsoft Windows. 
@@ -27,3 +29,9 @@ nonlinear.
 
 The software also generates graphics, showing the close-in RF spectra, the interferer (fading) amplitudes, the interferer (fading) phases, and the receiver AGC for both 
 synchronous and nonsynchronous operation.
+
+
+The National Radio Systems Committee (NRSC) gratefully acknowledges the work of the author, David L. Hershberger.  The National Radio Systems Committee (NRSC, 
+https://nrscstandards.org) is the AM/FM technical standards body for North America.  NRSC is jointly sponsored by the National Association of Broadcasters (NAB) and 
+the Consumer Technology Association (CTA). Its purpose is to study and make recommendations for technical standards that relate to radio broadcasting and the reception 
+of radio broadcast signals.
