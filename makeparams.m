@@ -1,6 +1,6 @@
 # ===========================================================================
 # Co-channel AM broadcast channel interference simulator
-# Version 2.1 - December 15, 2020
+# Version 2.2 - May 10, 2021
 # By Dave Hershberger
 # Nevada City, California
 # dave@w9gr.com
@@ -9,11 +9,11 @@
 #
 # Create random signal parameters for co-channel simulation
 #
-# Also write flac files with interpolated complex fading gain
+# Also writes flac files with interpolated complex fading gain.
 # RF fading complex amplitudes are greatly undersampled,
 # 5 values per interferer, then interpolated to fs.
 #
-# New parameters to be set:
+# Other parameters randomly set:
 #
 # RF frequency offset normal distribution, standard dev 3 Hz,
 #   limited to +/- 30 Hz maximum

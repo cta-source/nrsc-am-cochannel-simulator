@@ -1,6 +1,6 @@
 # ===========================================================================
 # Co-channel AM broadcast channel interference simulator
-# Version 2.1 - December 15, 2020
+# Version 2.2 - May 10, 2021
 # By Dave Hershberger
 # Nevada City, California
 # dave@w9gr.com

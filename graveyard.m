@@ -1,6 +1,6 @@
 # ===========================================================================
 # Co-channel AM broadcast channel interference simulator
-# Version 2.1 - December 15, 2020
+# Version 2.2 - May 10, 2021
 # By Dave Hershberger
 # Nevada City, California
 # dave@w9gr.com
@@ -58,6 +58,10 @@
 # So the audio is the exactly same that you would get from an uncompressed
 # WAV file, but the file size is only about half of what a WAV file would be.
 #
+# The audio files have been peak limited such that the maximum amplitude
+# is 0.9 times full scale. In other words, a signal reaching a value of 0.9
+# times full scale will be envelope modulated 100 percent.
+#
 # The output files are also in the FLAC format. Most modern audio player
 # software (such as VLC, Audacity, etc.) supports the FLAC format.
 #
@@ -74,10 +78,25 @@
 #   0.05
 #   0.0316
 #
+# The nif.txt file may include comment lines beginning with the "#" character.
+#
 # The snr value is ignored in NIF mode.
 # To use NIF mode, set the variable NIFMODE=1. To use the random amplitude
 # levels, with a combined SNR value, set NIFMODE=0 and SNR to the value in
 # dB that you want (such as 10 dB).
+#
+# These values are set up in another file called graveyard.cfg. This file
+# contains four values:
+#
+# NIF (Set to 1 for NIF mode, where you specify interferer amplitudes, or
+#   0 for random interferer amplitudes.)
+#
+# nfile1 (This value selects the audio file for the first interferer, 1 to 71.)
+# nfile2 (This value selects the audio file for the last interferer, 1 to 71,
+#   nfile2>=nfile1. The number of interferers is nfile2-nfile1+1. nfile1 and
+#   nfile2 are ignored in NIF mode.)
+#
+# snr (Sets average SNR value in decibels. Ignored in NIF mode.)
 #
 # There are six audio files produced by this script. They begin with the
 # string "cochannelXX" where XX is the number of interferers. So you would
@@ -85,7 +104,7 @@
 # If NIF mode is invoked, the file names will start with "nifXX" instead.
 # The files are:
 #   cochannelXX.flac - stereo file, synchronous case on left channel,
-#                      nonsynchronouse case on the right channel
+#                      nonsynchronous case on the right channel
 #   cochannelXXqrm.flac - stereo file, with just the interference signal.
 #                         The envelope signal is canceled, but since envelope
 #                         detection is nonlinear, the cancellation is not
@@ -113,9 +132,10 @@
 #   
 #   
 #
-# To use this script, change the number of interferers by changing the value
-# for nfile2. You can also change the nfile1 value if you want to try some
-# different interfering signals.
+# To use this script, change the number of interferers by changing the values
+# of nfile1 and nfile2 in the config.txt file. For example if you want 4
+# intererers you could set nfile1=1 and nfile2=4. Or if you want 4 different
+# interfering signals, you might select nfile1=50 and nfile2=53.
 #
 # To change the signal to noise ratio, change the SNR value. This is the
 # signal to noise ratio in dB. 10 dB is the default. It creates a lot of
@@ -131,25 +151,19 @@
 # ===========================================================================
 clear;
 tic;
-# Set NIFMODE=0 for random amplitudes, NIFMODE=1 to read relative amplitudes
-#   from the file nif.txt:
-NIFMODE=0;
-# Set SNR (in decibels) (ignored if NIFMODE is used):
-snr=10;
-# Set the number of interferers here:
-# For graveyard simulation use 64 interferers:
-# nfile1=1;
-# nfile2=64;
-# For non-graveyard simulation use 3 interferers:
-# nfile1=1;
-# nfile2=3;
-nfile1=1;
-nfile2=64;
+# Read control parameters from the file config.txt:
+load config.txt;
+NIFMODE=config(1);
+nfile1=config(2);
+nfile2=config(3);
+snr=config(4);
+# NIFMODE=0 for random amplitudes, NIFMODE=1 to read relative amplitudes
+#   from the file nif.txt
 # Read in the previously randomly generated interference parameters
 load "parameters.txt";
 nfreqs=length(freqerr);
 sdfreq=sqrt(sum(freqerr.^2)/(nfreqs-1));
-fprintf('Standard deviation of carrier offset frequencies = %f\n',sdfreq);
+fprintf('Standard deviation of 71 carrier offset frequencies = %f\n',sdfreq);
 fprintf('Max carrier offset = %f\n',max(freqerr));
 fprintf('Min carrier offset = %f\n',min(freqerr));
 # Read in the desired signal
@@ -166,10 +180,9 @@ if (NIFMODE==0)
   foutname=sprintf('cochannel%2.2i',nqrm);
 else
   load nif.txt;
-  nfile1=1;
-  nfile2=length(nif);
+  nfile2=nfile1+length(nif)-1;
   nqrm=nfile2-nfile1+1;
-  rfamp(1:nfile2)=20*log10(nif);
+  rfamp(nfile1:nfile2)=20*log10(nif);
   foutname=sprintf('nif%2.2i',nqrm);
 endif
 gplot=zeros(nqrm,ngplot);
@@ -180,7 +193,7 @@ for jfile=nfile1:nfile2
   [qrmout,gplot(ifile-nfile1,:)]=addsig(qrm,afname,ffname,freqerr(jfile),rfamp(jfile));
   qrm=qrmout;
 # If you want to see the offset frequencies, uncomment the next line
-#  fprintf('freqerr(%i)=%f\n',jfile,freqerr(jfile));
+  fprintf('freqerr(%i)=%f\n',jfile,freqerr(jfile));
 endfor
 t=linspace(0,nsamp-1,nsamp)/fs;
 figure(2);
