@@ -1,6 +1,6 @@
 # ===========================================================================
 # Co-channel AM broadcast channel interference simulator
-# Version 2.2 - May 10, 2021
+# Version 2.3 - November 3, 2021
 # By Dave Hershberger
 # Nevada City, California
 # dave@w9gr.com
@@ -142,6 +142,9 @@
 # interference at 10 dB, but the desired signal is still audible, and every
 # word is discernible in the desired signal.
 #
+# To select flat or 75 microsecond pre-emphasized audio, change the
+# "emph" value. Use 0 for flat, 1 for pre-emphasized.
+#
 # The required GNU Octave packages include:
 #   signal
 #   ltfat
@@ -157,6 +160,12 @@ NIFMODE=config(1);
 nfile1=config(2);
 nfile2=config(3);
 snr=config(4);
+emph=config(5);
+if (emph==0)
+  basename="audio";
+else
+  basename="audioemph";
+endif
 # NIFMODE=0 for random amplitudes, NIFMODE=1 to read relative amplitudes
 #   from the file nif.txt
 # Read in the previously randomly generated interference parameters
@@ -167,7 +176,7 @@ fprintf('Standard deviation of 71 carrier offset frequencies = %f\n',sdfreq);
 fprintf('Max carrier offset = %f\n',max(freqerr));
 fprintf('Min carrier offset = %f\n',min(freqerr));
 # Read in the desired signal
-[desired,fs]=audioread('audio01.flac');
+[desired,fs]=audioread([basename '01.flac']);
 # Convert to AM by adding carrier (DC) and clipping negative peaks (if any)
 desired=max(0,desired/0.9+1);
 nsamp=length(desired);
@@ -188,7 +197,7 @@ endif
 gplot=zeros(nqrm,ngplot);
 for jfile=nfile1:nfile2
   ifile=jfile+1;
-  afname=sprintf('audio%2.2i.flac',ifile);
+  afname=sprintf([basename '%2.2i.flac'],ifile);
   ffname=sprintf('fade%2.2i.flac',ifile);
   [qrmout,gplot(ifile-nfile1,:)]=addsig(qrm,afname,ffname,freqerr(jfile),rfamp(jfile));
   qrm=qrmout;
@@ -273,7 +282,7 @@ freqerr=zeros(size(freqerr));
 qrm=zeros(size(desired));
 for jfile=nfile1:nfile2
   ifile=jfile+1;
-  afname=sprintf('audio%2.2i.flac',ifile);
+  afname=sprintf([basename '%2.2i.flac'],ifile);
   ffname=sprintf('fade%2.2i.flac',ifile);
   [qrmout,gplot(ifile-nfile1,:)]=addsig(qrm,afname,ffname,freqerr(jfile),rfamp(jfile));
   qrm=qrmout;
@@ -296,10 +305,10 @@ agcsync=max(0.25,agcsync);
 t=linspace(0,nsamp-1,nsamp)/fs;
 # Show the receiver AGC waveforms for synchronous and nonsynchronous cases
 figure(5);
-plot(t,agc,t,agcsync);
-title('Receiver AGC (divided by this waveform)');
+plot(t,1./agc,t,1./agcsync);
+title('Receiver AGC Gain');
 xlabel('Time (seconds)');
-ylabel('Reciprocal of Gain');
+ylabel('Gain (linear)');
 legend('Nonsync','Sync','location','south');
 grid on;
 saveas(5,[foutname 'agc.png']);
