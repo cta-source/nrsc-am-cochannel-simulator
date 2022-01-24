@@ -1,6 +1,6 @@
 # ===========================================================================
 # Co-channel AM broadcast channel interference simulator
-# Version 2.3 - November 3, 2021
+# Version 2.4 - January 23, 2022
 # By Dave Hershberger
 # Nevada City, California
 # dave@w9gr.com
@@ -31,7 +31,8 @@
 #
 # Amplitude of each interferer is set randomly with a uniform distribution
 # over the -20 to 0 dB range. The rms of the total interference is then 
-# adjusted to provide the desired average SNR value (10 dB is the default). 
+# adjusted to provide the desired average SIR (signal to interference ratio)
+# value (10 dB is the default). 
 #
 # This script requires the function "addsig.m" which adds interferers
 # to a signal.
@@ -66,7 +67,7 @@
 # software (such as VLC, Audacity, etc.) supports the FLAC format.
 #
 # The relative amplitudes of the interfering signals may be set at random,
-# with a specified SNR value (such as 10 dB). Or, this script may be operated
+# with a specified SIR value (such as 10 dB). Or, this script may be operated
 # in "NIF mode," where NIF means "Nighttime Interference Free." In NIF mode,
 # the relative rms amplitudes of the interferers are set by a file named
 # "nif.txt" where the linear relative amplitude of each interferer is set.
@@ -80,13 +81,13 @@
 #
 # The nif.txt file may include comment lines beginning with the "#" character.
 #
-# The snr value is ignored in NIF mode.
+# The sir value is ignored in NIF mode.
 # To use NIF mode, set the variable NIFMODE=1. To use the random amplitude
-# levels, with a combined SNR value, set NIFMODE=0 and SNR to the value in
+# levels, with a combined SIR value, set NIFMODE=0 and SIR to the value in
 # dB that you want (such as 10 dB).
 #
 # These values are set up in another file called graveyard.cfg. This file
-# contains four values:
+# contains six values:
 #
 # NIF (Set to 1 for NIF mode, where you specify interferer amplitudes, or
 #   0 for random interferer amplitudes.)
@@ -96,7 +97,9 @@
 #   nfile2>=nfile1. The number of interferers is nfile2-nfile1+1. nfile1 and
 #   nfile2 are ignored in NIF mode.)
 #
-# snr (Sets average SNR value in decibels. Ignored in NIF mode.)
+# sir (Sets average SIR value in decibels. Ignored in NIF mode.)
+# emph (0 for flat audio, 1 for 75 microsecond pre-emphasized audio)
+# snr (Sets SNR value in decibels, no noise if >= 90 dB)
 #
 # There are six audio files produced by this script. They begin with the
 # string "cochannelXX" where XX is the number of interferers. So you would
@@ -137,13 +140,15 @@
 # intererers you could set nfile1=1 and nfile2=4. Or if you want 4 different
 # interfering signals, you might select nfile1=50 and nfile2=53.
 #
-# To change the signal to noise ratio, change the SNR value. This is the
-# signal to noise ratio in dB. 10 dB is the default. It creates a lot of
+# To change the signal to interference ratio, change the SIR value. This is the
+# signal to interference ratio in dB. 10 dB is the default. It creates a lot of
 # interference at 10 dB, but the desired signal is still audible, and every
 # word is discernible in the desired signal.
 #
 # To select flat or 75 microsecond pre-emphasized audio, change the
 # "emph" value. Use 0 for flat, 1 for pre-emphasized.
+#
+# To add Gaussian noise, specify a value for SNR less than 90 dB.
 #
 # The required GNU Octave packages include:
 #   signal
@@ -159,8 +164,9 @@ load config.txt;
 NIFMODE=config(1);
 nfile1=config(2);
 nfile2=config(3);
-snr=config(4);
+sir=config(4);
 emph=config(5);
+snr=config(6);
 if (emph==0)
   basename="audio";
 else
@@ -217,7 +223,7 @@ if (NIFMODE==0)
   qrmrms=rms(qrm);
   sigrms=rms(desired);
 # Scale the QRM to the desired amplitude
-  qrmamp=10^(-snr*0.05)*sigrms/qrmrms;
+  qrmamp=10^(-sir*0.05)*sigrms/qrmrms;
 else
   qrmamp=1;
 endif
@@ -233,6 +239,16 @@ rf=desired+qrm*qrmamp;
 # To simulate 5 kHz receiver bandwidth, make a 2.5 kHz 5th order Butterworth LPF
 fcutoff=2500;
 [bbpf,abpf]=butter(5,2*fcutoff/fs);
+# If snr<90 then read in and add noise
+if(snr<90)
+  [qrn,fs]=audioread('qrn.flac');
+  qrn=qrn(:,1)+1i*qrn(:,2);
+  qrnbpf=filter(bbpf,abpf,qrn);
+  rmsqrnbpf=rms(qrnbpf);
+  qrngain=10^(-snr*0.05)/rmsqrnbpf;  
+  qrn=qrn*qrngain;
+  rf=rf+qrn;
+endif
 rf=filter(bbpf,abpf,rf);
 envelopenonsync=abs(rf);
 # Make 10 Hz LPF for receiver AGC (single pole)
@@ -296,6 +312,9 @@ grid on;
 saveas(4,[foutname 'phaseqrmsync.png']);
 # Must use the SAME QRM amplitude for the synchronous case!
 rfsync=desired+qrm*qrmamp;
+if(snr<90)
+  rfsync=rfsync+qrn;
+endif
 # Bandpass filter
 rfsync=filter(bbpf,abpf,rfsync);
 envelopesync=abs(rfsync);
@@ -395,4 +414,7 @@ audiowrite([foutname 'syncqrm.flac'],syncqrm,fslo);
 audiowrite([foutname 'nonsyncqrm.flac'],nonsyncqrm,fslo);
 
 fprintf('Number of interferers = %i\n',nqrm);
+if(snr<90)
+  fprintf('Signal to Noise Ratio =%6.2f dB\n',snr);
+endif
 toc;

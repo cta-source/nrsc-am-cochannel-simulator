@@ -22,8 +22,8 @@
 # so the first interferer audio will be audio02.flac.
 # The nfile2 value will be ignored if NIF=1, and the nfile1
 # value will be the first file number for the NIF mode.
-40
-44
+1
+3
 # Set the average SNR in decibels. 10 dB is suggested.
 # Higher values mean lower interference amplitude.
 # The SNR will be the average SNR. Interferers will
@@ -36,3 +36,11 @@
 # A value of 0 here selects flat audio. A value of 1 selects
 # pre-emphasized audio.
 1
+# Set the signal to noise ratio (SNR) in decibels. Higher
+# values mean lower noise amplitude. If the value specified
+# is higher than +90 (db), then NO noise will be added to
+# the signal. The specified SNR value will specify the noise
+# power within the receiver's bandwidth (typically 5 kHz,
+# corresponding to a 2.5 kHz audio response), referred to
+# the desired signal's carrier amplitude (set to 1.0).
+20
