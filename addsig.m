@@ -1,6 +1,6 @@
 # ===========================================================================
 # Co-channel AM broadcast channel interference simulator
-# Version 2.2 - May 10, 2021
+# Version 2.6 - April 17, 2022
 # By Dave Hershberger
 # Nevada City, California
 # dave@w9gr.com
@@ -17,12 +17,14 @@
 #   rffreq - the frequency offset (in Hertz) of the interferer
 #   rfamp - the amplitude of the interferer (in dB)
 #   fade - a complex vector representing the fading function
+#   NIFMODE - 0 for random mode, 1 for NIFMODE
+#   fadepct - 10 for 10% skywave, 50 for 50% skywave, NIFMODE
 #
 # rfout is the rf input signal plus the added interferer
 # gplot is a subsampled version of the fading function, for plotting
 #
 # ===========================================================================
-function [rfout,gplot]=addsig(rf,afname,ffname,rffreq,rfamp)
+function [rfout,gplot]=addsig(rf,afname,ffname,rffreq,rfamp,NIFMODE,fadepct)
 # Read the specified audio flac file
 [y,fs]=audioread(afname);
 # Read the specified fading function flac file
@@ -31,6 +33,10 @@ function [rfout,gplot]=addsig(rf,afname,ffname,rffreq,rfamp)
 fade=fade(:,1)+1i*fade(:,2);
 # Normalize fading function to unity rms amplitude
 fade=fade/rms(fade);
+# If NIF mode then scale fading to percent skywave
+if (NIFMODE>0)
+  fade=pctskywave(fadepct,fade);
+endif
 # Convert audio to AM by adding carrier and clipping negative peaks (if any)
 y=max(0,y/0.9+1);
 nsamp=length(y);

@@ -1,6 +1,52 @@
-# NIF file example
-# Linear amplitudes relative to desired signal
-# -20, -26, and -30 dB
-0.1
-0.05
-0.0316
+# NIF file
+# Specifies amplitudes relative to desired signal
+# POSITIVE values (including zero) are interpreted as linear amplitudes.
+# NEGATIVE values are interpreted as decibel amplitudes.
+# Comments are preceded by the pound sign
+# For KMMJ near 2 mV/M contour
+# WSB
+-18.5
+# LRA7-A Cordoba Argentina
+-37.4
+# ZYH-709 Brasilia Brazil
+-41.9
+# WWKK Petoskey MI
+-44.0
+# KXL Portland OR
+-46.0
+# KHWG Fallon NV
+-47.1
+# HIDB-C Santiago Dominican Republic
+-47.9
+# KOAL Price Utah
+-50.4
+# CKVR Melfort Saskatchewan
+-50.7
+# ZYL213 Contagem Brazil
+-51.2
+# OAX3T-A El Mundo Peru
+-51.4
+# KERR Polson MT
+-52.1
+# CKGB/A Timmins ON Canada
+-53.8
+# NEW Saskatoon SK Canada
+-55.0
+# KAMA El Paso TX
+-55.3
+# ZYK642-A Ribeirao Pre Brazil
+-56.2
+# XEMG/A Arriaga MX
+-56.3
+# KFQD Anchorage AK
+-56.9
+# ZYJ-927 Lagarto Brazil
+-63.5
+# NEW Hampden ME
+-64.5
+# ZYI-681 Patos Brazil
+-66.0
+# NEW Rimouski QC Canada
+-72.2
+# CBGY Bonavista Bay NF Canada
+-81.4

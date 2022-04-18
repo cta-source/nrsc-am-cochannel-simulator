@@ -1,6 +1,6 @@
 # ===========================================================================
 # Co-channel AM broadcast channel interference simulator
-# Version 2.4 - January 23, 2022
+# Version 2.6 - April 17, 2022
 # By Dave Hershberger
 # Nevada City, California
 # dave@w9gr.com
@@ -70,14 +70,29 @@
 # with a specified SIR value (such as 10 dB). Or, this script may be operated
 # in "NIF mode," where NIF means "Nighttime Interference Free." In NIF mode,
 # the relative rms amplitudes of the interferers are set by a file named
-# "nif.txt" where the linear relative amplitude of each interferer is set.
-# The desired signal is assigned an amplitude of 1 (unity). If you wanted
+# "nif.txt" where the linear or dB relative amplitude of each interferer is set.
+# The desired signal is assigned an amplitude of 1 (unity).
+# POSITIVE values (including zero) are interpreted as linear amplitudes.
+# NEGATIVE values are interpreted as decibel amplitudes.
+# Examples: If you wanted
 # three interferers at -20, -26, and -30 dB for instance, then the nif.txt
-# file would look like this:
+# file could look like this:
 #
 #   0.1
 #   0.05
 #   0.0316
+#
+#  Or you could specify the amplitudes using negative dB values:
+#
+#  -20
+#  -26
+#  -30
+#
+# Positive linear and negative dB values may be intermixed as shown here:
+#
+#  -20
+#  0.05
+#  -30
 #
 # The nif.txt file may include comment lines beginning with the "#" character.
 #
@@ -121,19 +136,19 @@
 #   cochannelXXnonsyncqrm.flac - monophonic file, nonsynchronous case,
 #                                interference only
 #
-# There are also six graphics files produced:
+# There are also seven graphics files produced:
 #   cochannelXXspecsync.png - close in spectrum of synchronous spectrum
 #   cochannelXXspecnonsync.png -0 close in spectrum of nonsynchronous spectrum
 #   cochannelXXagc.png - shows receiver AGC signal for both synchronous
 #                        and nonsynchronous cases.
 #   cochannelXXampqrm.png - shows amplitude versus time for interferers
 #                           (both synchronous and nonsynchronous)
+#   cochannelXXampqrmsum.png - shows amplitude versus time for the sum of all
+#                              interferers (both synchronous and nonsynchronous)
 #   cochannelXXphaseqrmnonsync.png - shows phase versus time for nonsynchronous
 #                                    interferers.
 #   cochannelXXphaseqrmsync.png - shows phase versus time for synchronous
 #                                 interferers.
-#   
-#   
 #
 # To use this script, change the number of interferers by changing the values
 # of nfile1 and nfile2 in the config.txt file. For example if you want 4
@@ -167,6 +182,7 @@ nfile2=config(3);
 sir=config(4);
 emph=config(5);
 snr=config(6);
+fadepct=config(7);
 if (emph==0)
   basename="audio";
 else
@@ -195,9 +211,21 @@ if (NIFMODE==0)
   foutname=sprintf('cochannel%2.2i',nqrm);
 else
   load nif.txt;
-  nfile2=nfile1+length(nif)-1;
+  nnif=length(nif)
+  nfile2=nfile1+nnif-1;
   nqrm=nfile2-nfile1+1;
-  rfamp(nfile1:nfile2)=20*log10(nif);
+# Interpret positive values as linear (convert to dB)
+# Interpret negative values as dB
+  sir=0;
+  for k=1:nnif
+    if (nif(k)<0)
+      rfamp(nfile1+k-1)=nif(k);
+    else
+      rfamp(nfile1+k-1)=20*log10(max(1e-20,nif(k)));
+    endif
+    sir=sir+10^(0.1*rfamp(nfile1+k-1));
+  endfor
+  sir=-10*log10(sir);
   foutname=sprintf('nif%2.2i',nqrm);
 endif
 gplot=zeros(nqrm,ngplot);
@@ -205,19 +233,19 @@ for jfile=nfile1:nfile2
   ifile=jfile+1;
   afname=sprintf([basename '%2.2i.flac'],ifile);
   ffname=sprintf('fade%2.2i.flac',ifile);
-  [qrmout,gplot(ifile-nfile1,:)]=addsig(qrm,afname,ffname,freqerr(jfile),rfamp(jfile));
+  [qrmout,gplot(ifile-nfile1,:)]=addsig(qrm,afname,ffname,freqerr(jfile),rfamp(jfile),NIFMODE,fadepct);
   qrm=qrmout;
 # If you want to see the offset frequencies, uncomment the next line
   fprintf('freqerr(%i)=%f\n',jfile,freqerr(jfile));
 endfor
 t=linspace(0,nsamp-1,nsamp)/fs;
-figure(2);
+figure(1);
 plot(t(1:nskip:nsamp),raddeg*unwrap(angle(gplot.')));
 title('Phases (Unwrapped) of Interferers - Nonsynchronous Case');
 xlabel('Time (seconds)');
 ylabel('Phase (degrees)');
 grid on;
-saveas(2,[foutname 'phaseqrmnonsync.png']);
+saveas(1,[foutname 'phaseqrmnonsync.png']);
 if (NIFMODE==0)
 # Calculate QRM amplitude
   qrmrms=rms(qrm);
@@ -228,13 +256,33 @@ else
   qrmamp=1;
 endif
 fprintf('QRM gain for nonsynchronous case = %f\n',qrmamp);
-figure(1);
-plot(t(1:nskip:nsamp),qrmamp*abs(gplot.'));
-title('Amplitudes of Interferers');
+figure(2);
+plot(t(1:nskip:nsamp),20*log10(qrmamp*abs(gplot.')));
+title('dB Amplitudes of Interferers');
 xlabel('Time (seconds)');
-ylabel('Relative Linear Amplitude');
+ylabel('Relative Amplitude (decibels)');
+axis([0 t(nsamp) -80 0]);
 grid on;
-saveas(1,[foutname 'ampqrm.png']);
+saveas(2,[foutname 'ampqrm.png']);
+figure(3);
+if(nqrm==1)
+  pqrm=(qrmamp^2)*real(gplot(1,:)).^2+imag(gplot(1,:)).^2;
+else
+  pqrm=(qrmamp^2)*sum(real(gplot(:,:)).^2+imag(gplot(:,:)).^2);
+endif
+#pqrm=qrmamp^2*sum(real(gplot(:,:)).^2+imag(gplot(:,:)).^2);
+#pqrm=zeros(1,nqrm);
+#for k=1:nqrm
+#  pqrm=pqrm+real(gplot(k,:)).^2+imag(gplot(k,:)).^2;
+#endfor
+#pqrm=pqrm*qrmamp^2;
+plot(t(1:nskip:nsamp),10*log10(pqrm));
+title('dB Amplitude of Total Interferers');
+xlabel('Time (seconds)');
+ylabel('Relative Amplitude (decibels)');
+axis([0 t(nsamp) -2*sir 0]);
+grid on;
+saveas(3,[foutname 'ampqrmsum.png']);
 rf=desired+qrm*qrmamp;
 # To simulate 5 kHz receiver bandwidth, make a 2.5 kHz 5th order Butterworth LPF
 fcutoff=2500;
@@ -251,9 +299,10 @@ if(snr<90)
 endif
 rf=filter(bbpf,abpf,rf);
 envelopenonsync=abs(rf);
-# Make 10 Hz LPF for receiver AGC (single pole)
-# This was 1 Hz in earlier versions. 10 Hz makes AGC faster.
-fagc=10;
+# According to ST Micro, simple AM receiver AGC time constant
+# is set to produce 1% distortion on 100 Hz 100% AM.
+# This results in a 2.2 Hz first order Butterworth LPF.
+fagc=2.2;
 [b,a]=butter(1,2*fagc/fs);
 # Subtract 1 from AGC lowpass signal before filtering, then restore it
 agc=1+filter(b,a,envelopenonsync-1);
@@ -282,13 +331,31 @@ winnarrow=gausswin(nfft);
 [pspec,fspec]=pwelch(rfnarrow,winnarrow,[],nfft,fs/ndecim,'centerdc','plot','no-strip');
 dbpspec=10*log10(pspec);
 dbpspec=dbpspec-max(dbpspec);
-figure(3);
+figure(4);
 plot(fspec,dbpspec);
 title('Received Signal Close-In Spectrum (nonsynchronized)');
 xlabel('Frequency Offset (Hertz)');
 ylabel('Amplitude (decibels)');
 grid on;
-saveas(3,[foutname 'specnonsync.png']);
+saveas(4,[foutname 'specnonsync.png']);
+
+# Write out IF file
+# Shift the baseband signal up 12 kHz:
+fif=12e3;
+ifsig=rf.'.*exp(2i*pi*fif*t);
+#{
+[ifspec,iffreq]=pwelch(ifsig,[],[],[],fs,'centerdc','plot','no-strip');
+dbifspec=10*log10(ifspec);
+figure(10);
+plot(iffreq,dbifspec);
+title('IF Spectrum');
+xlabel('Frequency (Hertz)');
+ylabel('Amplitude (dB)');
+grid on;
+#}
+ifout=real(ifsig);
+ifout=0.9*ifout/max(abs(ifout));
+audiowrite([foutname 'nonsyncifout.flac'],ifout,fs);
 
 
 # Now do the synchronous case
@@ -300,16 +367,16 @@ for jfile=nfile1:nfile2
   ifile=jfile+1;
   afname=sprintf([basename '%2.2i.flac'],ifile);
   ffname=sprintf('fade%2.2i.flac',ifile);
-  [qrmout,gplot(ifile-nfile1,:)]=addsig(qrm,afname,ffname,freqerr(jfile),rfamp(jfile));
+  [qrmout,gplot(ifile-nfile1,:)]=addsig(qrm,afname,ffname,freqerr(jfile),rfamp(jfile),NIFMODE,fadepct);
   qrm=qrmout;
 endfor
-figure(4);
+figure(5);
 plot(t(1:nskip:nsamp),raddeg*unwrap(angle(gplot.')));
 title('Phases (Unwrapped) of Interferers - Synchronous Case');
 xlabel('Time (seconds)');
 ylabel('Phase (degrees)');
 grid on;
-saveas(4,[foutname 'phaseqrmsync.png']);
+saveas(5,[foutname 'phaseqrmsync.png']);
 # Must use the SAME QRM amplitude for the synchronous case!
 rfsync=desired+qrm*qrmamp;
 if(snr<90)
@@ -323,14 +390,14 @@ agcsync=1+filter(b,a,envelopesync-1);
 agcsync=max(0.25,agcsync);
 t=linspace(0,nsamp-1,nsamp)/fs;
 # Show the receiver AGC waveforms for synchronous and nonsynchronous cases
-figure(5);
+figure(6);
 plot(t,1./agc,t,1./agcsync);
 title('Receiver AGC Gain');
 xlabel('Time (seconds)');
 ylabel('Gain (linear)');
 legend('Nonsync','Sync','location','south');
 grid on;
-saveas(5,[foutname 'agc.png']);
+saveas(6,[foutname 'agc.png']);
 envelopesync=envelopesync./agcsync;
 dc=mean(envelopesync);
 envelopesync=envelopesync-dc;
@@ -346,14 +413,20 @@ rfnarrow=resample(rfsync,1,ndecim);
 [pspec,fspec]=pwelch(rfnarrow,winnarrow,[],nfft,fs/ndecim,'centerdc','plot','no-strip');
 dbpspec=10*log10(pspec);
 dbpspec=dbpspec-max(dbpspec);
-figure(6);
+figure(7);
 plot(fspec,dbpspec);
 title('Received Signal Close-In Spectrum (synchronized)');
 xlabel('Frequency Offset (Hertz)');
 ylabel('Amplitude (decibels)');
 grid on;
-saveas(6,[foutname 'specsync.png']);
+saveas(7,[foutname 'specsync.png']);
 
+# Write out IF file
+# Shift the baseband signal up 12 kHz:
+ifsig=rfsync.'.*exp(2i*pi*fif*t);
+ifout=real(ifsig);
+ifout=0.9*ifout/max(abs(ifout));
+audiowrite([foutname 'syncifout.flac'],ifout,fs);
 
 # Form stereo output file, with synchronous case on the left channel
 # and nonsynchronous case in the right channel
@@ -414,6 +487,7 @@ audiowrite([foutname 'syncqrm.flac'],syncqrm,fslo);
 audiowrite([foutname 'nonsyncqrm.flac'],nonsyncqrm,fslo);
 
 fprintf('Number of interferers = %i\n',nqrm);
+fprintf('Signal to Interference Ratio =%6.2f dB\n',sir);
 if(snr<90)
   fprintf('Signal to Noise Ratio =%6.2f dB\n',snr);
 endif
