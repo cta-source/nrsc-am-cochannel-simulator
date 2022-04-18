@@ -1,0 +1,53 @@
+# Control and configuration file for graveyard.m
+#
+# Several parameters are set by this file.
+# Comments (such as this line) begin with the "#" character
+# and are ignored.
+#
+# First parameter: NIF
+# Set NIF mode. NIF=1 for specified interferer amplitudes.
+# NIF=0 for randomly set interferer amplitudes.
+# If NIF=1, then the interferer amplitudes will be read
+# from the file nif.txt which must be present. The number
+# of values in the nif.txt file will be the number of
+# interferers.
+0
+# Next are the numbers for the first and last interferers:
+# nfile1
+# nfile2
+# For example if nfile1=10 and nfile2=13, then there will
+# be four interferers. The audio will be taken from the
+# files audio11.flac through audio14.flac. (Remember that
+# the desired audio will be taken from the file audio01.flac
+# so the first interferer audio will be audio02.flac.)
+# The nfile2 value will be ignored if NIF=1, and the nfile1
+# value will be the first file number for the NIF mode.
+1
+64
+# Set the average SIR (signal to interference ratio) in
+# decibels. 10 dB is suggested as the effects of synchronization
+# will be easier to hear. Higher values mean lower interference
+# amplitude. The SIR will be the average SIR. Interferers will
+# fade up and down in amplitude. The SIR will be worse
+# than the specified value some of the time, and better at
+# other times.
+# This value is ignored if NIF=1.
+10
+# Set the audio type - flat or 75 microsecond pre-emphasized.
+# A value of 0 here selects flat audio. A value of 1 selects
+# pre-emphasized audio.
+0
+# Set the signal to noise ratio (SNR) in decibels. Higher
+# values mean lower noise amplitude. If the value specified
+# is higher than +90 (db), then NO noise will be added to
+# the signal. The specified SNR value will specify the noise
+# power within the receiver's bandwidth (typically 5 kHz,
+# corresponding to a 2.5 kHz audio response), referred to
+# the desired signal's carrier amplitude (set to 1.0).
+60
+# Set the skywave percentage amplitude. This value is only
+# used in NIF mode. 10 means that 10% of the time, the skywave
+# amplitude will exceed the specified amplitude in the nif.txt
+# file. 50 means that 50% of the time, the skywave amplitude
+# will exceed the specified value.
+50
