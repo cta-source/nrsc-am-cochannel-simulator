@@ -5,6 +5,7 @@ graveyard.m                       14,467 - GNU Octave code to simulate co-channe
 makeparams.m                       1,047 - GNU Octave code to create random interferer parameters
 nif.txt                               50 - Example data file for NIF mode
 parameters.txt                    17,588 - Data file used by graveyard.m containing random interferer parameters
+pctskywave.m                         476 - GNU Octave code to provide a desired percentage of skywave
 
 cochannel03.flac               2,111,017 - stereo audio 3 interferers L=synchronous R=nonsynchronous
 cochannel03nonsync.flac        1,080,555 - mono audio 3 interferers nonsynchronous
